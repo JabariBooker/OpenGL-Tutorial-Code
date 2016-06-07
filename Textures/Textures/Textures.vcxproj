@@ -72,6 +72,10 @@
     <IncludePath>C:\glew-1.13.0\include;C:\glfw-3.1.2.bin.WIN32\include;C:\Simple OpenGL Image Library\src;$(IncludePath)</IncludePath>
     <LibraryPath>C:\glfw-3.1.2.bin.WIN32\lib-vc2015;C:\glew-1.13.0\lib\Release\Win32;C:\Simple OpenGL Image Library\projects\VC9\Debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>C:\Users\Booker\Documents\OpenGL-Tutorial-Code\Textures\Textures\Util\glm-0.9.7.5\glm\glm;C:\Users\Booker\Documents\OpenGL-Tutorial-Code\Textures\Textures\Util\glew-1.13.0-win32\glew-1.13.0\include;C:\Users\Booker\Documents\OpenGL-Tutorial-Code\Textures\Textures\Util\glfw-3.2.bin.WIN64\glfw-3.2.bin.WIN64\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\Booker\Documents\OpenGL-Tutorial-Code\Textures\Textures\Util\Simple-OpenGL-Image-Library\projects\VC9\x64\Debug;C:\Users\Booker\Documents\OpenGL-Tutorial-Code\Textures\Textures\Util\glew-1.13.0-win32\glew-1.13.0\lib\Release\x64;C:\Users\Booker\Documents\OpenGL-Tutorial-Code\Textures\Textures\Util\glfw-3.2.bin.WIN64\glfw-3.2.bin.WIN64\lib-vc2015;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -88,6 +92,9 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
     </ClCompile>
+    <Link>
+      <AdditionalDependencies>opengl32.lib;glew32s.lib;glfw3.lib;SOIL.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>

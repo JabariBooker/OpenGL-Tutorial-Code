@@ -32,10 +32,13 @@ const GLchar* fragmentSource =
 
 "out vec4 outColor;"
 
-"uniform sampler2D tex;"
+"uniform sampler2D texKitten;"
+"uniform sampler2D texPuppy;"
 
 "void main(){"
-"	outColor = texture(tex, Texcoord) * vec4(Color, 1.0);"
+"	vec4 colKitten = texture(texKitten, Texcoord);"
+"	vec4 colPuppy = texture(texPuppy, Texcoord);"
+"	outColor = mix(colKitten, colPuppy, 0.5);"
 "}";
 
 
@@ -116,27 +119,41 @@ int main() {
 	glEnableVertexAttribArray(texAttrib);
 	glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE, 7*sizeof(float), (void*)(5*sizeof(float)));
 
-	//Create a 2D texture
-	GLuint tex;
-	glGenTextures(1, &tex);
-	glBindTexture(GL_TEXTURE_2D, tex);
+	//Create 2D textures
+	GLuint textures[2];
+	glGenTextures(2, textures);
 
 	//loading an image to be used as a texture
 	int width, height;
-	unsigned char* image =
-		SOIL_load_image("sample.png", &width, &height, 0, SOIL_LOAD_RGB);
+	unsigned char* image;
+	
+	glActiveTexture(GL_TEXTURE0);	//telling the GPU which texture unit to use
+	glBindTexture(GL_TEXTURE_2D, textures[0]);
+	image = SOIL_load_image("sample.png", &width, &height, 0, SOIL_LOAD_RGB);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
 		GL_UNSIGNED_BYTE, image);
-
 	SOIL_free_image_data(image);	//frees up memory for the image
-
-	//Wrapping for texture
+	glUniform1i(glGetUniformLocation(shaderProgram, "texKitten"), 0);	//texture units setting their texture in the shader 
+																		//Wrapping for texture
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	//(X,Y,Z) -> (S,T,R)
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);	//downscaling texture
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);	//upscaling texture
+
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, textures[1]);
+	image = SOIL_load_image("sample02.png", &width, &height, 0, SOIL_LOAD_RGB);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
+		GL_UNSIGNED_BYTE, image);
+	SOIL_free_image_data(image);
+	glUniform1i(glGetUniformLocation(shaderProgram, "texPuppy"), 1);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	while (!glfwWindowShouldClose(window)) {
 		glfwSwapBuffers(window);
@@ -147,6 +164,8 @@ int main() {
 		// Draw a rectangle from the 2 triangles using 6 indices
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	}
+
+	glDeleteTextures(2, textures);
 
 	glDeleteProgram(shaderProgram);
 	glDeleteShader(vertexShader);
